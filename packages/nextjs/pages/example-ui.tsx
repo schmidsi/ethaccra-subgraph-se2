@@ -1,9 +1,43 @@
+import { gql, useQuery } from "@apollo/client";
 import type { NextPage } from "next";
 import { MetaHeader } from "~~/components/MetaHeader";
 import { ContractData } from "~~/components/example-ui/ContractData";
 import { ContractInteraction } from "~~/components/example-ui/ContractInteraction";
 
+const GET_GREETINGS = gql`
+  query MyQuery {
+    greetings(orderBy: createdAt, orderDirection: desc) {
+      createdAt
+      greeting
+      id
+      premium
+      transactionHash
+      value
+      sender {
+        address
+        greetingCount
+        id
+      }
+      blockNumber
+    }
+  }
+`;
+
+const GET_GREETERS = gql`
+  query MyQuery {
+    senders {
+      address
+      greetingCount
+    }
+  }
+`;
+
 const ExampleUI: NextPage = () => {
+  const { loading, error, data } = useQuery(GET_GREETINGS);
+  const { data: greetersData } = useQuery(GET_GREETERS);
+
+  console.log({ loading, error, data });
+
   return (
     <>
       <MetaHeader
@@ -17,6 +51,26 @@ const ExampleUI: NextPage = () => {
       <div className="grid lg:grid-cols-2 flex-grow" data-theme="exampleUi">
         <ContractInteraction />
         <ContractData />
+      </div>
+      <h1>Greetings</h1>
+      <div>
+        <ul>
+          {data?.greetings.map((greeting: any) => (
+            <li>
+              {greeting.greeting} - {greeting.sender.address} - {greeting.blockNumber}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <h1>Greeters</h1>
+      <div>
+        <ul>
+          {greetersData?.senders.map((sender: any) => (
+            <li>
+              {sender.address} - {sender.greetingCount}
+            </li>
+          ))}
+        </ul>
       </div>
     </>
   );

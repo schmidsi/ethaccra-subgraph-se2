@@ -6,6 +6,7 @@ type Greeting @entity {
   value: BigInt
   createdAt: BigInt!
   transactionHash: String!
+  blockNumber: BigInt!
 }
 
 type Sender @entity {

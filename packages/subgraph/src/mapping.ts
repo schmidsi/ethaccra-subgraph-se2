@@ -29,6 +29,7 @@ export function handleGreetingChange(event: GreetingChange): void {
   greeting.value = event.params.value;
   greeting.createdAt = event.block.timestamp;
   greeting.transactionHash = event.transaction.hash.toHex();
+  greeting.blockNumber = event.block.number;
 
   greeting.save();
   sender.save();
